@@ -6,4 +6,4 @@ Disallow: /admin/
 Disallow: /cgi-bin/
 Disallow: /wp-admin/
 
-Sitemap: https://1v1-unblocked.github.io/sitemap.xml
+Sitemap: https://1v1lol-unblocked-games.github.io/sitemap.xml
