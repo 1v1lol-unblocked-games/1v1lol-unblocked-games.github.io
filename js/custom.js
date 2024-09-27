@@ -21,18 +21,18 @@ function search_animal() {
   }
 }
 
-// Google Analytics code
+// Updated Google Analytics code
 (function() {
   const script = document.createElement('script');
   script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-5R231DMLB7';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME5KKC2YJS';
   document.head.appendChild(script);
 
   script.onload = function() {
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'G-5R231DMLB7');
+    gtag('config', 'G-ME5KKC2YJS');
   };
 })();
 
