@@ -1,63 +1,23 @@
-/*
-
-Custom script
-
-This file will not be overwritten by the updater
-
-*/
-
-// JavaScript code
-function search_animal() {
-  let input = document.getElementById("searchbar").value;
-  input = input.toLowerCase();
-  let x = document.getElementsByClassName("animals");
-
-  for (let i = 0; i < x.length; i++) {
-    if (!x[i].innerHTML.toLowerCase().includes(input)) {
-      x[i].style.display = "none";
-    } else {
-      x[i].style.display = "block";
-    }
-  }
-}
-
-// Updated Google Analytics code
-(function() {
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME5KKC2YJS';
-  document.head.appendChild(script);
-
-  script.onload = function() {
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-ME5KKC2YJS');
-  };
-})();
-
-// PWA Installation Code
+// Ensure the script runs only after the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-  let deferredPrompt;
-
-  // Check if the PWA is already installed
-  const isPwaInstalled = localStorage.getItem('pwaInstalled');
+  let deferredPrompt; // Variable to store the beforeinstallprompt event
+  const isPwaInstalled = localStorage.getItem('pwaInstalled'); // Check if the PWA is already installed
 
   if (!isPwaInstalled) {
-    // Create and append the popup HTML if it doesn't already exist
+    // Inject the PWA popup HTML dynamically
     if (!document.getElementById('pwa-popup')) {
       const popupHTML = `
         <div id="pwa-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); color: #333; text-align: center; z-index: 1000; display: flex; align-items: center; justify-content: center;">
           <div style="padding: 25px; background: #f5f5f5; border-radius: 20px; width: 90%; max-width: 450px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); text-align: center;">
-            <h2 style="font-size: 22px; margin-bottom: 15px; color: #2c3e50;">Hey there! 👋</h2>
+            <h2 style="font-size: 22px; margin-bottom: 15px; color: #2c3e50;">Install Our App! 👋</h2>
             <p style="font-size: 16px; color: #444; margin-bottom: 25px; font-weight: bold; color: #ff7f50;">
-              Don't Miss Out - <span style="color: #ff4500;">Install Our</span> Desktop App!
+              Don't miss out - add our app to your home screen!
             </p>
-            <button id="install-button" style="padding: 12px 28px; font-size: 18px; cursor: pointer; background: linear-gradient(135deg, #26616a, #184a52); color: white; border: none; border-radius: 30px; margin-right: 10px; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-              <i class="fas fa-download" style="margin-right: 10px; font-size: 20px;"></i>Add to Home Screen
+            <button id="install-button" style="padding: 12px 28px; font-size: 18px; cursor: pointer; background: linear-gradient(135deg, #26616a, #184a52); color: white; border: none; border-radius: 30px; margin-right: 10px; transition: all 0.3s ease;">
+              Install App
             </button>
             <button id="close-popup" style="padding: 12px 28px; font-size: 18px; cursor: pointer; background-color: transparent; color: #888; border: none; border-radius: 30px; transition: color 0.3s ease;">
-              Not Now
+              Maybe Later
             </button>
           </div>
         </div>
@@ -65,49 +25,30 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.insertAdjacentHTML('beforeend', popupHTML);
     }
 
+    // Reference the popup and buttons
     const popup = document.getElementById('pwa-popup');
     const installButton = document.getElementById('install-button');
     const closePopupButton = document.getElementById('close-popup');
 
     // Listen for the 'beforeinstallprompt' event
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); // Prevent the default prompt
-      deferredPrompt = e;
+      e.preventDefault(); // Prevent the default browser prompt
+      deferredPrompt = e; // Store the event for later use
       popup.style.display = 'flex'; // Show the popup
-
-      // Track that the install prompt was shown
-      if (typeof gtag === 'function') {
-        gtag('event', 'PWA Install Prompt', {
-          'event_category': 'PWA',
-          'event_label': 'Install Prompt Shown',
-        });
-      }
     });
 
     // Handle the install button click
     installButton.addEventListener('click', () => {
       if (deferredPrompt) {
-        deferredPrompt.prompt(); // Show the install prompt
-
+        deferredPrompt.prompt(); // Show the browser install prompt
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
             console.log('User accepted the A2HS prompt');
-            if (typeof gtag === 'function') {
-              gtag('event', 'PWA Install Accepted', {
-                'event_category': 'PWA',
-                'event_label': 'Install Accepted',
-              });
-            }
+            localStorage.setItem('pwaInstalled', 'true'); // Save the installation status
           } else {
             console.log('User dismissed the A2HS prompt');
-            if (typeof gtag === 'function') {
-              gtag('event', 'PWA Install Dismissed', {
-                'event_category': 'PWA',
-                'event_label': 'Install Dismissed',
-              });
-            }
           }
-          deferredPrompt = null;
+          deferredPrompt = null; // Reset the deferred prompt
           popup.style.display = 'none'; // Hide the popup
         });
       }
@@ -121,14 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for the 'appinstalled' event
     window.addEventListener('appinstalled', () => {
       console.log('PWA was installed');
-      localStorage.setItem('pwaInstalled', 'true'); // Save the flag in localStorage
+      localStorage.setItem('pwaInstalled', 'true'); // Save the installation status
       popup.style.display = 'none'; // Hide the popup
-      if (typeof gtag === 'function') {
-        gtag('event', 'PWA Installed', {
-          'event_category': 'PWA',
-          'event_label': 'PWA Installed',
-        });
-      }
     });
   }
 });
+
+// Service Worker Registration (ensure it’s registered for all pages)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then((registration) => {
+    console.log('Service Worker registered with scope:', registration.scope);
+  }).catch((error) => {
+    console.error('Service Worker registration failed:', error);
+  });
+}
