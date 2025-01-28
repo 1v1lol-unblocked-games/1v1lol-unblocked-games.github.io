@@ -1,42 +1,5 @@
-/*
+// Custom script for PWA Popup
 
-Custom script
-
-This file will not be overwritten by the updater
-
-*/
-
-// JavaScript code
-function search_animal() {
-  let input = document.getElementById("searchbar").value;
-  input = input.toLowerCase();
-  let x = document.getElementsByClassName("animals");
-
-  for (let i = 0; i < x.length; i++) {
-    if (!x[i].innerHTML.toLowerCase().includes(input)) {
-      x[i].style.display = "none";
-    } else {
-      x[i].style.display = "block";
-    }
-  }
-}
-
-// Updated Google Analytics code
-(function() {
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME5KKC2YJS';
-  document.head.appendChild(script);
-
-  script.onload = function() {
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-ME5KKC2YJS');
-  };
-})();
-
-// PWA Installation Code
 document.addEventListener('DOMContentLoaded', () => {
   let deferredPrompt;
 
@@ -71,20 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for the 'beforeinstallprompt' event
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); // Prevent the default prompt
-      deferredPrompt = e;
+      e.preventDefault(); // Prevent the default browser prompt
+      deferredPrompt = e; // Save the event to use it later
       popup.style.display = 'flex'; // Show the popup
 
-      // Track that the install prompt was shown
+      // Track that the install prompt was shown (if using Google Analytics)
       if (typeof gtag === 'function') {
         gtag('event', 'PWA Install Prompt', {
-          'event_category': 'PWA',
-          'event_label': 'Install Prompt Shown',
+          event_category: 'PWA',
+          event_label: 'Install Prompt Shown',
         });
       }
     });
 
-    // Handle the install button click
+    // Handle the "Add to Home Screen" button click
     installButton.addEventListener('click', () => {
       if (deferredPrompt) {
         deferredPrompt.prompt(); // Show the install prompt
@@ -94,26 +57,26 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('User accepted the A2HS prompt');
             if (typeof gtag === 'function') {
               gtag('event', 'PWA Install Accepted', {
-                'event_category': 'PWA',
-                'event_label': 'Install Accepted',
+                event_category: 'PWA',
+                event_label: 'Install Accepted',
               });
             }
           } else {
             console.log('User dismissed the A2HS prompt');
             if (typeof gtag === 'function') {
               gtag('event', 'PWA Install Dismissed', {
-                'event_category': 'PWA',
-                'event_label': 'Install Dismissed',
+                event_category: 'PWA',
+                event_label: 'Install Dismissed',
               });
             }
           }
-          deferredPrompt = null;
+          deferredPrompt = null; // Reset the deferred prompt
           popup.style.display = 'none'; // Hide the popup
         });
       }
     });
 
-    // Handle the close popup button click
+    // Handle the "Not Now" button click
     closePopupButton.addEventListener('click', () => {
       popup.style.display = 'none'; // Hide the popup
     });
@@ -123,10 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('PWA was installed');
       localStorage.setItem('pwaInstalled', 'true'); // Save the flag in localStorage
       popup.style.display = 'none'; // Hide the popup
+
       if (typeof gtag === 'function') {
         gtag('event', 'PWA Installed', {
-          'event_category': 'PWA',
-          'event_label': 'PWA Installed',
+          event_category: 'PWA',
+          event_label: 'PWA Installed',
         });
       }
     });
