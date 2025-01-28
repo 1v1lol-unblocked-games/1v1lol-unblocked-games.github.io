@@ -40,10 +40,11 @@ function search_animal() {
 window.addEventListener('load', function() {
   let deferredPrompt;
 
-  // Check if the PWA is already installed
+  // Check if the PWA is already installed or if the popup has already been shown
   const isPwaInstalled = localStorage.getItem('pwaInstalled');
+  const isPopupShown = localStorage.getItem('pwaPopupShown');
 
-  if (!isPwaInstalled) {
+  if (!isPwaInstalled && !isPopupShown) {
     // Create and append the popup HTML
     const popupHTML = `
       <div id="pwa-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); color: #333; text-align: center; z-index: 1000; display: flex; align-items: center; justify-content: center;">
@@ -78,6 +79,9 @@ window.addEventListener('load', function() {
         'event_category': 'PWA',
         'event_label': 'Install Prompt Shown'
       });
+
+      // Mark that the popup has been shown so it won't show again
+      localStorage.setItem('pwaPopupShown', 'true');
     });
 
     // Handle the install button click
@@ -93,6 +97,9 @@ window.addEventListener('load', function() {
               'event_category': 'PWA',
               'event_label': 'Install Accepted'
             });
+
+            // Mark the PWA as installed in localStorage
+            localStorage.setItem('pwaInstalled', 'true');
           } else {
             console.log('User dismissed the A2HS prompt');
             // Track dismissal
@@ -115,7 +122,8 @@ window.addEventListener('load', function() {
     // Listen for the 'appinstalled' event
     window.addEventListener('appinstalled', () => {
       console.log('PWA was installed');
-      localStorage.setItem('pwaInstalled', 'true'); // Save the flag in localStorage
+      // Mark the PWA as installed in localStorage
+      localStorage.setItem('pwaInstalled', 'true');
       popup.style.display = 'none'; // Hide the popup
       // Track the PWA installation
       gtag('event', 'PWA Installed', {
