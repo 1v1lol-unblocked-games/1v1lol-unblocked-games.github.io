@@ -6,8 +6,8 @@ This file will not be overwritten by the updater
 
 */
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Ensure the script runs after the page is fully loaded
+window.onload = () => {
+  // Ensure the script runs only after the site is fully loaded
   let deferredPrompt;
 
   // Check if the PWA is already installed
@@ -42,10 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault(); // Prevent the default prompt
       deferredPrompt = e;
 
-      // Show the popup only when the site is fully loaded
+      // Show the popup after a short delay (to ensure full site load feels smooth)
       setTimeout(() => {
         popup.style.display = 'flex'; // Show the popup
-      }, 1000); // Delay of 1 second for better UX
+      }, 1000); // Adjust the delay if necessary
 
       // Track that the install prompt was shown
       gtag('event', 'PWA Install Prompt', {
@@ -98,4 +98,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
-});
+};
